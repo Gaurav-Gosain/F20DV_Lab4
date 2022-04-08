@@ -1,0 +1,485 @@
+Entity,Code,Year,Technology Diffusion (Comin and Hobijn (2004) and others)
+Automobile,,1915,10
+Automobile,,1916,12
+Automobile,,1917,17
+Automobile,,1918,19
+Automobile,,1919,23
+Automobile,,1920,28
+Automobile,,1921,31
+Automobile,,1922,34
+Automobile,,1923,39
+Automobile,,1924,44
+Automobile,,1925,49
+Automobile,,1926,54
+Automobile,,1927,56
+Automobile,,1928,58
+Automobile,,1929,58.5
+Automobile,,1930,59
+Automobile,,1931,56
+Automobile,,1932,53
+Automobile,,1933,50
+Automobile,,1934,51
+Automobile,,1935,52
+Automobile,,1936,54
+Automobile,,1937,55
+Automobile,,1938,54
+Automobile,,1939,54
+Automobile,,1940,55
+Automobile,,1941,57
+Automobile,,1942,53
+Automobile,,1943,49
+Automobile,,1944,47
+Automobile,,1945,46
+Automobile,,1946,48
+Automobile,,1947,51
+Automobile,,1948,53
+Automobile,,1949,55
+Automobile,,1950,58
+Automobile,,1951,60
+Automobile,,1952,60
+Automobile,,1953,62
+Automobile,,1954,65
+Automobile,,1955,68
+Automobile,,1956,72
+Automobile,,1957,74
+Automobile,,1958,71
+Automobile,,1959,73
+Automobile,,1960,75
+Automobile,,1961,76
+Automobile,,1962,75
+Automobile,,1963,79
+Automobile,,1964,79
+Automobile,,1965,79
+Automobile,,1966,79
+Automobile,,1967,78
+Automobile,,1968,78.5
+Automobile,,1969,79
+Automobile,,1970,80
+Automobile,,1971,80
+Automobile,,1972,81
+Automobile,,1973,82
+Automobile,,1974,83
+Automobile,,1975,83
+Automobile,,1976,84
+Automobile,,1977,85
+Automobile,,1978,85
+Automobile,,1979,85
+Automobile,,1980,86
+Automobile,,1981,86
+Automobile,,1982,86
+Automobile,,1983,86.5
+Automobile,,1984,87
+Automobile,,1985,88
+Automobile,,1986,88
+Automobile,,1987,89
+Automobile,,1988,89.5
+Automobile,,1989,90
+Automobile,,1990,91
+Automobile,,1991,91
+Automobile,,1992,91
+Automobile,,1993,92
+Automobile,,1994,91
+Automobile,,1995,91
+Automobile,,1996,92
+Automobile,,1997,92
+Automobile,,1998,92
+Automobile,,1999,91
+Automobile,,2000,92
+Automobile,,2001,92
+Automobile,,2002,91
+Automobile,,2003,91
+Automobile,,2004,91
+Automobile,,2005,91
+Cellular phone,,1994,10
+Cellular phone,,1995,12
+Cellular phone,,1996,16
+Cellular phone,,1997,21
+Cellular phone,,1998,36.3
+Cellular phone,,1999,34
+Cellular phone,,2000,42
+Cellular phone,,2001,49
+Cellular phone,,2002,56
+Cellular phone,,2003,62.8
+Cellular phone,,2004,63
+Cellular phone,,2005,71.3
+Cellular phone,,2006,67
+Cellular phone,,2007,73
+Cellular phone,,2008,75
+Cellular phone,,2009,84
+Cellular phone,,2010,87.2
+Cellular phone,,2011,89
+Cellular phone,,2012,87
+Cellular phone,,2013,90
+Cellular phone,,2014,91
+Cellular phone,,2015,92
+Cellular phone,,2016,93
+Cellular phone,,2017,94
+Cellular phone,,2018,95
+Cellular phone,,2019,96
+Colour TV,,1966,10
+Colour TV,,1967,15
+Colour TV,,1968,21
+Colour TV,,1969,25
+Colour TV,,1970,31
+Colour TV,,1971,39
+Colour TV,,1972,43
+Colour TV,,1973,48
+Colour TV,,1974,57
+Colour TV,,1975,64
+Colour TV,,1976,69
+Colour TV,,1977,74
+Colour TV,,1978,75
+Colour TV,,1979,78
+Colour TV,,1980,79
+Colour TV,,1981,80
+Colour TV,,1982,85
+Colour TV,,1983,88
+Colour TV,,1984,89
+Colour TV,,1985,90
+Colour TV,,1986,90.5
+Colour TV,,1987,91
+Colour TV,,1988,93
+Colour TV,,1989,94
+Colour TV,,1990,96
+Colour TV,,1991,96
+Colour TV,,1992,95
+Colour TV,,1993,95
+Colour TV,,1994,96
+Colour TV,,1995,94
+Colour TV,,1996,96
+Colour TV,,1997,95
+Colour TV,,1998,94
+Colour TV,,1999,95
+Colour TV,,2000,94
+Colour TV,,2001,94
+Colour TV,,2002,96
+Colour TV,,2003,95
+Colour TV,,2004,97
+Colour TV,,2005,96
+Computer,,1992,20.7
+Computer,,1993,20.7
+Computer,,1994,20.7
+Computer,,1995,20.7
+Computer,,1996,20.7
+Computer,,1997,20.7
+Computer,,1998,42
+Computer,,1999,42
+Computer,,2000,42
+Computer,,2001,42
+Computer,,2002,42
+Computer,,2003,63.1
+Computer,,2004,63.1
+Computer,,2005,67.1
+Computer,,2006,67.1
+Computer,,2007,67.1
+Computer,,2008,67.1
+Computer,,2009,67.1
+Computer,,2010,75.2
+Computer,,2011,76.7
+Computer,,2012,78.9
+Computer,,2013,83.8
+Computer,,2014,85.1
+Computer,,2015,86.8
+Computer,,2016,89.3
+Computer,,2017,89.3
+Computer,,2018,89.3
+Computer,,2019,89.3
+Ebook reader,,2009,2
+Ebook reader,,2010,5
+Ebook reader,,2011,10
+Ebook reader,,2012,19
+Ebook reader,,2013,24
+Ebook reader,,2014,25.1
+Ebook reader,,2015,26
+Ebook reader,,2016,26.6
+Ebook reader,,2017,27.2
+Ebook reader,,2018,27.5
+Ebook reader,,2019,27.5
+Internet,,1993,10
+Internet,,1994,11
+Internet,,1995,13
+Internet,,1996,16
+Internet,,1997,19
+Internet,,1998,25
+Internet,,1999,34
+Internet,,2000,42
+Internet,,2001,49
+Internet,,2002,52
+Internet,,2003,54
+Internet,,2004,57
+Internet,,2005,61
+Internet,,2006,62
+Internet,,2007,65
+Internet,,2008,68
+Internet,,2009,70
+Internet,,2010,74
+Internet,,2011,76
+Internet,,2012,81
+Internet,,2013,82
+Internet,,2014,83
+Internet,,2015,85
+Internet,,2016,88
+Landline,,1903,10
+Landline,,1904,12
+Landline,,1905,14
+Landline,,1906,18
+Landline,,1907,19.5
+Landline,,1908,21
+Landline,,1909,23
+Landline,,1910,24.5
+Landline,,1911,26
+Landline,,1912,27
+Landline,,1913,28
+Landline,,1914,29
+Landline,,1915,30
+Landline,,1916,31
+Landline,,1917,32
+Landline,,1918,33
+Landline,,1919,34
+Landline,,1920,34
+Landline,,1921,35
+Landline,,1922,35
+Landline,,1923,37
+Landline,,1924,37
+Landline,,1925,38
+Landline,,1926,39
+Landline,,1927,39
+Landline,,1928,41
+Landline,,1929,41
+Landline,,1930,39.5
+Landline,,1931,38
+Landline,,1932,35
+Landline,,1933,32
+Landline,,1934,31
+Landline,,1935,32
+Landline,,1936,33
+Landline,,1937,34
+Landline,,1938,34.5
+Landline,,1939,35
+Landline,,1940,37
+Landline,,1941,39
+Landline,,1942,41.5
+Landline,,1943,44
+Landline,,1944,45
+Landline,,1945,46
+Landline,,1946,50
+Landline,,1947,54
+Landline,,1948,58
+Landline,,1949,60
+Landline,,1950,62
+Landline,,1951,63.5
+Landline,,1952,65
+Landline,,1953,67.5
+Landline,,1954,70
+Landline,,1955,71.67
+Landline,,1956,73.33
+Landline,,1957,75
+Landline,,1958,76.5
+Landline,,1959,78
+Landline,,1960,78.5
+Landline,,1961,79
+Landline,,1962,80
+Landline,,1963,81
+Landline,,1964,82
+Landline,,1965,85
+Landline,,1966,86
+Landline,,1967,87
+Landline,,1968,88.5
+Landline,,1969,90
+Landline,,1970,87
+Landline,,1971,87.5
+Landline,,1972,88
+Landline,,1973,88.67
+Landline,,1974,89.33
+Landline,,1975,90
+Landline,,1976,90.5
+Landline,,1977,91
+Landline,,1978,91.5
+Landline,,1979,92
+Landline,,1980,92.5
+Landline,,1981,93
+Landline,,1982,92.5
+Landline,,1983,92
+Landline,,1984,92
+Landline,,1985,92
+Landline,,1986,92.25
+Landline,,1987,92.5
+Landline,,1988,92.75
+Landline,,1989,93
+Landline,,1990,93.5
+Landline,,1991,94
+Landline,,1992,94
+Landline,,1993,94
+Landline,,1994,94
+Landline,,1995,94
+Landline,,1996,94
+Landline,,1997,94
+Landline,,1998,94
+Landline,,1999,94
+Landline,,2000,94
+Landline,,2001,94.5
+Landline,,2002,95
+Landline,,2003,94
+Landline,,2004,93
+Landline,,2005,92
+Landline,,2009,83
+Landline,,2010,75
+Landline,,2011,70.5
+Landline,,2012,75
+Landline,,2013,58.7
+Landline,,2014,57.3
+Landline,,2015,54.7
+Landline,,2016,50.7
+Landline,,2017,46.7
+Landline,,2018,41.7
+Landline,,2019,41.7
+Microcomputer,,1984,8.2
+Microcomputer,,1985,10
+Microcomputer,,1986,12
+Microcomputer,,1987,13
+Microcomputer,,1988,14
+Microcomputer,,1989,15
+Microcomputer,,1990,17
+Microcomputer,,1991,20
+Microcomputer,,1992,22
+Microcomputer,,1993,22.9
+Microcomputer,,1994,25
+Microcomputer,,1995,30
+Microcomputer,,1996,33
+Microcomputer,,1997,36.6
+Microcomputer,,1998,40
+Microcomputer,,1999,45
+Microcomputer,,2000,51
+Microcomputer,,2001,56.3
+Microcomputer,,2002,58
+Microcomputer,,2003,61.8
+Microcomputer,,2004,63
+Microcomputer,,2005,65
+Microcomputer,,2006,67
+Microcomputer,,2007,69.7
+Microcomputer,,2008,72
+Microcomputer,,2009,74.1
+Microcomputer,,2010,76.7
+Microcomputer,,2011,75.6
+Microcomputer,,2012,75
+Microcomputer,,2013,77
+Microcomputer,,2014,75
+Microcomputer,,2015,73
+Microcomputer,,2016,78
+Microcomputer,,2017,78
+Microcomputer,,2018,78
+Microcomputer,,2019,78
+Radio,,1925,10
+Radio,,1926,17
+Radio,,1927,19
+Radio,,1928,28
+Radio,,1929,36
+Radio,,1930,45
+Radio,,1931,52
+Radio,,1932,60
+Radio,,1933,63
+Radio,,1934,65
+Radio,,1935,68
+Radio,,1936,72
+Radio,,1937,74
+Radio,,1938,78
+Radio,,1939,80
+Radio,,1940,81
+Radio,,1941,82
+Radio,,1942,84
+Radio,,1943,84
+Radio,,1944,87
+Radio,,1945,88
+Radio,,1946,89
+Radio,,1947,92
+Radio,,1948,92
+Radio,,1949,93
+Radio,,1950,92
+Radio,,1951,92
+Radio,,1952,92
+Radio,,1953,93
+Radio,,1954,96
+Radio,,1955,96
+Radio,,1956,96
+Radio,,1957,96
+Radio,,1958,96
+Radio,,1959,96
+Radio,,1960,95
+Radio,,1961,95
+Radio,,1962,94
+Radio,,1963,95
+Radio,,1964,96
+Radio,,1965,96
+Radio,,1966,96
+Radio,,1967,96
+Radio,,1968,96
+Radio,,1969,97
+Radio,,1970,98
+Radio,,1971,99
+Radio,,1972,99
+Radio,,1973,99
+Radio,,1974,99
+Radio,,1975,99
+Radio,,1976,99
+Radio,,1977,99
+Radio,,1978,99
+Radio,,1979,99
+Radio,,1980,99
+Radio,,1981,99
+Radio,,1982,99
+Radio,,1983,99
+Radio,,1984,99
+Radio,,1985,99
+Radio,,1986,99
+Radio,,1987,99
+Radio,,1988,99
+Radio,,1989,99
+Radio,,1990,99
+Radio,,1991,99
+Radio,,1992,99
+Radio,,1993,99
+Radio,,1994,99
+Radio,,1995,99
+Radio,,1996,99
+Radio,,1997,99
+Radio,,1998,99
+Radio,,1999,99
+Radio,,2000,99
+Radio,,2001,99
+Radio,,2002,99
+Radio,,2003,99
+Radio,,2004,99
+Radio,,2005,99
+Smartphone usage,,2011,35
+Smartphone usage,,2012,45
+Smartphone usage,,2013,54
+Smartphone usage,,2014,57
+Smartphone usage,,2015,68
+Smartphone usage,,2016,73
+Smartphone usage,,2017,73
+Smartphone usage,,2018,77
+Smartphone usage,,2019,81
+Social media usage,,2005,5
+Social media usage,,2006,11
+Social media usage,,2007,15
+Social media usage,,2008,21
+Social media usage,,2009,37
+Social media usage,,2010,48
+Social media usage,,2011,50
+Social media usage,,2012,59
+Social media usage,,2013,63
+Social media usage,,2014,62
+Social media usage,,2015,65
+Social media usage,,2016,69
+Social media usage,,2017,80
+Social media usage,,2018,77
+Social media usage,,2019,79
+Tablet,,2010,3
+Tablet,,2011,10
+Tablet,,2012,25
+Tablet,,2013,34
+Tablet,,2014,39
+Tablet,,2015,45
+Tablet,,2017,64
+Tablet,,2018,64
+Tablet,,2019,64

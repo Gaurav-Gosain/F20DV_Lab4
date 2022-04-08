@@ -1,0 +1,294 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: black;
+    overflow-x: hidden;
+}
+
+.container {
+    width: 100vw;
+    height: 98vh;
+}
+
+#row {
+    height: 48%;
+    border-radius: 30px;
+    border: 1px solid white;
+    margin: 0.9%;
+    float: left;
+    width: 47%;
+    background-color: #141414;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: white;
+    text-transform: uppercase;
+    font-family: monospace;
+}
+
+#full_row {
+    width: 96%;
+    height: 80%;
+    border-radius: 30px;
+    border: 1px solid #14141414;
+    margin: 0.9%;
+    float: left;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: white;
+    text-transform: uppercase;
+    font-family: monospace;
+}
+
+#tall_row {
+    height: 70%;
+    border-radius: 30px;
+    border: 1px solid white;
+    margin: 0.9%;
+    float: left;
+    width: 47%;
+    background-color: #141414;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: white;
+    text-transform: uppercase;
+    font-family: monospace;
+}
+
+.map path:hover {
+    fill-opacity: 0.5;
+    cursor: zoom-in;
+    stroke: 5px;
+}
+
+.active:hover {
+    fill-opacity: 1 !important;
+    cursor: zoom-out !important;
+}
+
+.slider_map {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: 0.4s;
+    transition: 0.4s;
+}
+
+.slider_map:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: 0.4s;
+    transition: 0.4s;
+}
+
+input:checked+.slider_map {
+    background-color: #2196f3;
+}
+
+input:focus+.slider_map {
+    box-shadow: 0 0 1px #2196f3;
+}
+
+input:checked+.slider_map:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider_map.round_map {
+    border-radius: 34px;
+}
+
+.slider_map.round_map:before {
+    border-radius: 50%;
+}
+
+#map_toggle {
+    position: absolute;
+    top: 3%;
+    left: 42%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: monospace;
+    flex-direction: column;
+    color: white;
+    background-color: #141414aa;
+    border-radius: 5px;
+    padding: 5px;
+    /* opacity: 0; */
+}
+
+#toggle {
+    position: absolute;
+    top: 3%;
+    left: 2%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: monospace;
+    flex-direction: column;
+    color: white;
+    background-color: #141414aa;
+    border-radius: 5px;
+    padding: 5px;
+    /* opacity: 0; */
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+#area {
+    fill: steelblue;
+    stroke: white;
+    stroke-width: 1.5px;
+}
+
+#area1 {
+    fill: orangered;
+    stroke: white;
+    stroke-width: 3px;
+}
+
+#line {
+    fill: none;
+    stroke: yellow;
+    stroke-width: 1.5px;
+}
+
+#line1 {
+    fill: none;
+    stroke: orangered;
+    stroke-width: 3px;
+}
+
+.zoom {
+    cursor: move;
+    pointer-events: all;
+}
+
+/* text {
+            font-size: 16px;
+            font-family: Open Sans, sans-serif;
+        } */
+
+text.title {
+    font-size: 24px;
+    font-weight: 500;
+}
+
+text.subTitle {
+    font-weight: 500;
+    fill: #777777;
+}
+
+text.caption {
+    font-weight: 400;
+    font-size: 14px;
+    fill: #777777;
+}
+
+text.label {
+    font-weight: 600;
+}
+
+text.valueLabel {
+    font-weight: 300;
+}
+
+text.yearText {
+    font-size: 64px;
+    font-weight: 700;
+    opacity: 0.25;
+}
+
+.tick text {
+    fill: #777777;
+}
+
+.xAxis .tick:nth-child(2) text {
+    text-anchor: start;
+}
+
+.tick line {
+    shape-rendering: CrispEdges;
+    stroke: #dddddd;
+}
+
+.tick line.origin {
+    stroke: #aaaaaa;
+}
+
+.bar_chart_race path.domain {
+    display: none;
+}
+
+.bar_chart_race2 path.domain {
+    display: none;
+}
+
+div>button {
+    margin: 10px;
+    padding: 10px;
+    background-color: #00bfff;
+    color: white;
+    border-radius: 5px;
+    font-size: 20px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    font-size: 2em;
+    font-family: monospace;
+    text-transform: uppercase;
+}
+
+div>button:hover {
+    transform: scale(1.2);
+}
+
+.bar_chart_race>button {
+    position: absolute;
+    right: 40px;
+    float: right;
+}
+
+.bar_chart_race2>button {
+    position: absolute;
+    right: 40px;
+    float: right;
+}
+
+.tt {
+    /* top: 10%;
+    left: 10%; */
+    display: none;
+}

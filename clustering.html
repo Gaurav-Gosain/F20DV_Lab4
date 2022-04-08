@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Covid -Dashboard</title>
+    <script src='https://d3js.org/d3.v7.min.js'></script>
+    <script src="https://d3js.org/d3-selection-multi.v1.min.js"></script>
+    <script src="https://d3js.org/d3-geo-projection.v3.min.js"></script>
+</head>
+
+<body>
+
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            overflow-x: hidden;
+            /* background-color: #141414; */
+        }
+
+        .kmeans-chart {
+            font-family: "Open Sans", Arial, Helvetica, sans-serif;
+            font-size: 9px;
+            /* fill: #ccc; */
+        }
+
+        .kmeans-chart .centroid {
+            stroke: #000;
+            stroke-width: 2px;
+            r: 10px;
+            opacity: 0.5;
+        }
+
+        .kmeans-chart text.label {
+            font-size: 12px;
+            fill: #333;
+        }
+
+        .kmeans-chart .axis line,
+        .axis path {
+            fill: none;
+            stroke-width: 3px;
+            /* stroke: #ccc; */
+            shape-rendering: crispEdges;
+        }
+
+        .container {
+            width: 100%;
+            height: 40vh;
+        }
+
+        .focus {
+            fill: red !important;
+        }
+    </style>
+
+    <div style="width: 100%; display:flex;justify-content: center;align-items:center">
+        <button style="padding: 5px; border-radius: 5px; margin: 5px">
+            <a href="index.html" style="text-decoration: none;">
+                Go back to the Dashboard
+            </a>
+        </button>
+    </div>
+
+    <div class="container"></div>
+    <div id="kmeans" class="kmeans-chart"></div>
+
+    <!-- make a div with inputs and dropdowns -->
+    <div style="width: 100%; display: flex; justify-content:space-evenly; align-items: center;">
+        <input type="text" style="padding: 10px;" name="Iterations" id="iterations_input"
+            placeholder="Iterations (Default = 10)">
+        <input type="text" style="padding: 10px;" name="K" id="k_input" placeholder="K (Default = 3)">
+
+        <div>
+            <label>X Axis</label>
+            <select id="x_input" style="padding: 10px;">
+                <option value="GDP per capita growth (annual %)" selected>GDP per capita growth (annual %)</option>
+            </select>
+        </div>
+
+        <div>
+            <label>Y Axis</label>
+            <select id="y_input" style="padding: 10px;">
+                <option value="Individuals using the Internet (% of population)" selected>Individuals using the Internet
+                    (% of population)</option>
+            </select>
+        </div>
+
+        <button style="padding: 10px;" id="kmeans_button">Run K-Means</button>
+
+    </div>
+
+    <script>
+        d3.json(
+            'data/world.geojson',
+        ).then(async function (data) {
+
+
+            const df = await d3.csv(
+                'data/gdp.csv'
+            )
+
+            function kMeans(elt, w, h, numPoints, numClusters, maxIter, x_title = "GDP per capita growth (annual %)", y_title = "Individuals using the Internet (% of population)") {
+
+                // the current iteration
+                var iter = 1,
+                    centroids = [],
+                    points = [];
+
+                var margin = { top: 30, right: 80, bottom: 20, left: 80 },
+                    width = w - margin.left - margin.right,
+                    height = h - margin.top - margin.bottom;
+
+                var colors = d3.scaleLinear().range(d3.schemeSet1).domain([0, numClusters]);
+
+                d3.select(elt).selectAll('svg').remove()
+                var svg_k = d3.select(elt).append("svg")
+                    .style("width", width + margin.left + margin.right)
+                    .style("height", height + margin.top + margin.bottom);
+
+                var group = svg_k.append("g")
+                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+                svg_k.append("text")
+                    .attr("class", "label_k")
+                    .attr("transform", "translate(" + (width - margin.left - margin.right - 30) +
+                        "," + (margin.top + margin.bottom) + ")")
+                    .styles({
+                        'font-size': '30px',
+                    })
+                    .text("Iteration");
+
+                /**
+                 * Computes the euclidian distance between two points.
+                 */
+                function getEuclidianDistance(a, b) {
+                    var dx = b.x - a.x,
+                        dy = b.y - a.y;
+                    return Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+                }
+
+                var covid_data_group = d3.group(df, d => d.Code)
+
+                //group by iso code
+                isoGroup = d3.group(df, d => { return d.Code; })
+                //get unique iso keys
+                keys = isoGroup.keys()
+                uniqueISO = []
+                while (1) {
+                    value = keys.next().value
+                    if (typeof value === "undefined") { break }
+                    uniqueISO.push(value)
+                }
+
+                uniqueISO = uniqueISO.filter(d => d.slice(0, 4) != 'OWID')
+
+                // // console.log(uniqueISO)
+
+                var max_x = d3.max(uniqueISO.map(d => {
+                    return d3.max(covid_data_group.get(d), (d) => { return +d[x_title] })
+                }))
+
+                var min_x = d3.min(uniqueISO.map(d => {
+                    return d3.min(covid_data_group.get(d), (d) => { return +d[x_title] })
+                }))
+
+                var max_y = d3.max(uniqueISO.map(d => {
+                    return d3.max(covid_data_group.get(d), (d) => { return +d[y_title] })
+                }))
+
+                var min_y = d3.min(uniqueISO.map(d => {
+                    return d3.min(covid_data_group.get(d), (d) => { return +d[y_title] })
+                }))
+
+                var x = d3.scaleLinear()
+                    .domain([min_x, max_x])
+                    .range([0, width]);
+
+                var y = d3.scaleLinear()
+                    .domain([min_y, max_y])
+                    .range([height, 0]);
+
+                // add axis
+                var xAxis_k = d3.axisBottom(x);
+                var yAxis_k = d3.axisLeft(y);
+
+                group.append("g")
+                    // .attr("class", "x axis")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(xAxis_k);
+
+                group.append("g")
+                    // .attr("class", "y axis")
+                    .call(yAxis_k);
+
+                function isBrushed(brush_coords, cx, cy) {
+                    var x0 = brush_coords[0][0],
+                        x1 = brush_coords[1][0],
+                        y0 = brush_coords[0][1],
+                        y1 = brush_coords[1][1];
+                    return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1;    // This return TRUE or FALSE depending on if the points is in the selected area
+                }
+
+                // add brushing 
+                const brushed = (e) => {
+                    // get selected data
+                    const extent = e.selection
+                    // check all .point elements if they are in the selected data
+                    group.selectAll(".point")
+                        .each((d) => {
+                            if (isBrushed(extent, d.x, d.y)) {
+                                console.log(d)
+                                d3.select("#" + d.iso_code).classed("focus", true);
+                            }
+                            else {
+                                if (d.iso_code) {
+                                    d3.select("#" + d.iso_code).classed("focus", false);
+                                }
+
+                            }
+                        })
+
+                }
+
+                svg_k
+                    .append("text")
+                    .attrs({
+                        class: "x label",
+                        "text-anchor": "end",
+                        x: width,
+                        y: height,
+                        "font-size": "1.5em",
+                        "font-weight": "bold",
+                        fill: "white",
+                        "pointer-events": "none",
+                    })
+                    .styles({
+                        "font-family": "monospace",
+                        "letter-spacing": "0.5em",
+                        "text-transform": "uppercase",
+                    })
+                    .text(x_title + " ⟶");
+
+                svg_k
+                    .append("text")
+                    .attrs({
+                        class: "y label",
+                        "text-anchor": "end",
+                        x: height,
+                        y: -margin.bottom,
+                        "font-size": "1.5em",
+                        "font-weight": "bold",
+                        fill: "white",
+                        "pointer-events": "none",
+                    })
+                    .styles({
+                        "font-family": "monospace",
+                        "letter-spacing": "0.5em",
+                        "text-transform": "uppercase",
+                        transform: "rotate(90deg)",
+                    })
+                    .text("⟵ " + y_title);
+
+
+                var brush = d3.brush()
+                    .extent([[0, 0], [width, height]])
+                    .on("brush", brushed);
+
+                group.append("g")
+                    .attr("class", "brush")
+                    .call(brush)
+                    .call(brush.move, [0, height]);
+
+
+                const getData = (data) => data.map(d => {
+                    return {
+                        iso_code: d,
+                        x: x(d3.max(covid_data_group.get(d), d => +d[x_title])),
+                        y: y(d3.max(covid_data_group.get(d), d => +d[y_title])),
+                        type: "point",
+                        fill: "#ccc"
+                    }
+                })
+
+                uniqueISO_data = getData(uniqueISO)
+
+                // console.log(uniqueISO)
+
+                var y = d3.scaleLinear()
+                    .domain([0, 100])
+                    .range([height, 0]);
+
+                /**
+                 * Returns a point with the specified type and fill color and with random 
+                 * x,y-coordinates.
+                 */
+                function getRandomPoint(type, fill) {
+                    return {
+                        x: Math.round(Math.random() * (width / 2)) + width / 3,
+                        y: Math.round(Math.random() * (height / 2)) + width / 3,
+                        type: type,
+                        fill: fill
+                    };
+                }
+
+                /** 
+                 * Generates a specified number of random points of the specified type.
+                 */
+                function initializePoints(num, type) {
+                    var result = [];
+                    for (var i = 0; i < num; i++) {
+                        var color = colors(i);
+                        if (type !== "centroid") {
+                            color = "#ccc";
+                        }
+                        var point = getRandomPoint(type, color);
+                        point.id = point.type + "-" + i;
+                        result.push(point);
+                    }
+                    return result;
+                }
+
+                /**
+                 * Find the centroid that is closest to the specified point.
+                 */
+                function findClosestCentroid(point) {
+                    var closest = { i: -1, distance: width * 2 };
+                    centroids.forEach(function (d, i) {
+
+                        centroids.points = []
+                        var distance = getEuclidianDistance(d, point);
+                        // Only update when the centroid is closer
+                        if (distance < closest.distance) {
+                            closest.i = i;
+                            closest.distance = distance;
+
+                        };
+                    });
+
+                    // add point to centroid
+                    centroids[closest.i].points.push(point);
+
+                    // filter unique points
+                    centroids[closest.i].points = centroids[closest.i].points.filter(function (item, pos) {
+                        return centroids[closest.i].points.indexOf(item) == pos;
+                    })
+                    return (centroids[closest.i]);
+                }
+
+
+                /**
+                 * All points assume the color of the closest centroid.
+                 */
+                function colorizePoints() {
+                    points.forEach(function (d) {
+                        var closest = findClosestCentroid(d);
+                        d.fill = closest.fill;
+                    });
+                }
+
+                /**
+                 * Computes the center of the cluster by taking the mean of the x and y 
+                 * coordinates.
+                 */
+                function computeClusterCenter(cluster) {
+                    return [
+                        d3.mean(cluster, function (d) { return d.x; }),
+                        d3.mean(cluster, function (d) { return d.y; })
+                    ];
+                }
+
+                /**
+                 * Moves the centroids to the center of their cluster.
+                 */
+                function moveCentroids() {
+                    centroids.forEach(function (d) {
+                        // Get clusters based on their fill color
+                        var cluster = points.filter(function (e) {
+                            return e.fill === d.fill;
+                        });
+                        // Compute the cluster centers
+                        var center = computeClusterCenter(cluster);
+                        // Move the centroid
+                        d.x = center[0];
+                        d.y = center[1];
+                    });
+                }
+
+                /**
+                 * Updates the chart.
+                 */
+                function update() {
+
+                    var data = points.concat(centroids);
+
+                    // The data join
+                    var circle = group.selectAll("circle")
+                        .data(data);
+
+                    // Create new elements as needed
+                    circle.enter().append("circle")
+                        .attr("id", function (d) { return "point_" + d.iso_code; })
+                        .attr("class", function (d) { return d.type; })
+                        .attr("r", 5)
+
+                    // Update old elements as needed
+                    circle.transition().delay(100).duration(1000)
+                        .attr("cx", function (d) { return d.x; })
+                        .attr("cy", function (d) { return d.y; })
+                        .style("fill", function (d) { return d.fill; });
+
+                    // Remove old nodes
+                    circle.exit().remove();
+                }
+
+                /**
+                 * Updates the text in the label.
+                 */
+                function setText(text) {
+                    svg_k.selectAll(".label_k").text(text);
+                }
+
+                /**
+                 * Executes one iteration of the algorithm:
+                 * - Fill the points with the color of the closest centroid (this makes it 
+                 *   part of its cluster)
+                 * - Move the centroids to the center of their cluster.
+                 */
+                function iterate() {
+
+                    // Update label
+                    setText("Iteration " + iter + " of " + maxIter);
+
+                    // Colorize the points
+                    colorizePoints();
+
+                    // Move the centroids
+                    moveCentroids();
+
+                    // Update the chart
+                    update();
+                }
+
+                /** 
+                 * The main function initializes the algorithm and calls an iteration every 
+                 * two seconds.
+                 */
+                function initialize() {
+
+                    // Initialize random points and centroids
+                    centroids = initializePoints(numClusters, "centroid");
+
+                    // console.log(centroids)
+
+                    // points = initializePoints(numPoints, "point");
+                    centroids = [...Array(numClusters).keys()].map(i => {
+                        return {
+                            x: width / (i + 1),
+                            y: height,
+                            type: "centroid",
+                            fill: colors(i),
+                            points: []
+                        }
+                    })
+
+                    points = uniqueISO_data
+
+                    // initial drawing
+                    update();
+
+                    var interval = setInterval(function () {
+                        if (iter < maxIter + 1) {
+                            iterate();
+                            iter++;
+                        } else {
+                            clearInterval(interval);
+                            setText("Done");
+                        }
+                    }, 2 * 1000);
+                }
+
+                // Call the main function
+                initialize();
+
+                d3.selectAll(".centroid").style("cursor", "pointer").on("mouseover", function (e, d) {
+                    d.points.forEach(function (d) {
+                        if (d.iso_code) d3.select("#" + d.iso_code).classed("focus", true);
+                    })
+                }).on("mouseout", function (e, d) {
+                    d.points.forEach(function (d) {
+                        if (d.iso_code) d3.select("#" + d.iso_code).classed("focus", false);
+                    })
+                })
+
+
+            }
+            kMeans("#kmeans", window.innerWidth, window.innerHeight / 2, 1000, 4, 10);
+
+            d3.select("#kmeans_button").on("click", function () {
+
+                var k = +document.getElementById("k_input").value;
+
+                var iterations = +document.getElementById("iterations_input").value;
+
+                var x_label = document.getElementById("x_input").value;
+
+                var y_label = document.getElementById("y_input").value;
+
+                if (k === 0) k = 3;
+
+                if (iterations === 0) iterations = 10;
+
+                console.log(k, iterations, x_label, y_label)
+
+                kMeans("#kmeans", window.innerWidth, window.innerHeight / 2, 1000, k, iterations, x_label, y_label);
+            })
+
+
+
+            const world_map = d3.select(".container")
+            // The svg
+            const svg_map = world_map.append("svg");
+
+            svg_map
+                .attrs({
+                    width: document.getElementsByClassName("container")[0].clientWidth,
+                    height: document.getElementsByClassName("container")[0].clientHeight,
+                })
+                .styles({
+                    "border-radius": "20px",
+                });
+
+            (width = +svg_map.attr("width")), (height = +svg_map.attr("height"));
+
+            var projection;
+
+            projection = d3.geoMercator().translate([width / 2, height / 2]);
+
+
+            var path = d3.geoPath().projection(projection);
+
+
+            var g = svg_map.append("g");
+
+
+            let zoom = d3.zoom().on("zoom", handleZoom);
+
+            function handleZoom(e) {
+                d3.select("svg g").attr("transform", e.transform);
+            }
+
+            function initZoom() {
+                d3.select("svg").call(zoom);
+            }
+
+            var iso_code_list = [];
+
+            // Load external data and boot
+            d3.json("data/world.geojson").then(function (data) {
+
+                // Draw the map
+
+                data.features.forEach((d) => {
+                    iso_code_list.push(d.id);
+                });
+
+                g.append("g")
+                    .selectAll("path")
+                    .data(data.features)
+                    .join("path")
+                    .attr("class", "country")
+                    .attr("id", function (d) { return d.id; })
+                    .attr("fill", "#ccc")
+                    .attr("d", path)
+                    .style("stroke", "black")
+                    .style("stroke-width", "0.2px")
+                    .on("mouseover", function (event, d) {
+                        d3.selectAll(".point")
+                            .attrs({
+                                r: 5,
+                            })
+
+                        d3.select("#point_" + d.id)
+                            .transition()
+                            .delay(100)
+                            .duration(200)
+                            .attrs({
+                                r: 20,
+                                'stroke-width': 0.5,
+                                'stroke': 'black'
+                            })
+
+                    })
+                    .on("mousemove", function (event, d) {
+                        d3.selectAll(".tooltip").remove();
+
+                        // if (population.get(d.id) !== undefined) {
+                        hide_world_tooltip = true;
+
+
+                        label = world_map
+                            .append("div")
+                            .styles({
+                                position: "absolute",
+                                "font-weight": "bold",
+                                "text-align": "center",
+                                "background-color": "white",
+                                "border-radius": "20px",
+                                padding: "5px",
+                                border: "solid",
+                                "border-width": "1px",
+                                "border-color": "black",
+                                "pointer-events": "none",
+                                "z-index": "100",
+                                opacity: "0.8",
+                                color: "black",
+                                "font-family": "monospace",
+                                "font-size": "1.5em",
+                                left: event.pageX + 20 + "px",
+                                top: event.pageY + "px",
+                            })
+                            .attrs({
+                                class: "tooltip",
+                            })
+                            .html(
+                                `Country Name: ${d.properties.name} (${d.id})`
+                            )
+                    })
+                    .on("mouseout", function (e, d) {
+                        d3.selectAll(".tooltip").remove();
+                        d3.selectAll(".point")
+                            .attrs({
+                                r: 5,
+                            })
+                    })
+            });
+
+            initZoom();
+        })
+    </script>
+</body>
+
+</html>

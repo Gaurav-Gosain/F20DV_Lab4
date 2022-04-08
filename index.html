@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 4</title>
+    <script src='https://d3js.org/d3.v7.min.js'></script>
+    <script src="https://d3js.org/d3-selection-multi.v1.min.js"></script>
+    <script src="https://d3js.org/d3-geo-projection.v3.min.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div id="toggle">
+        <label class="switch">
+            <input type="checkbox">
+            <span class="slider_map round_map"></span>
+        </label>
+        <h4>
+            Toggle Circles
+        </h4>
+    </div>
+    <div id="map_toggle">
+        <label class="switch">
+            <input type="checkbox">
+            <span class="slider_map round_map"></span>
+        </label>
+        <h4>
+            Map Layout
+        </h4>
+    </div>
+    <div class="container">
+        <div id="row" class="map">
+            The size of the scalar circles represent the % of internet users in that country.
+        </div>
+        <div id="row" class="line_chart">
+            Growth of internet users in the world/selected country over time.
+            <button class="tt tootlip2">Info</button>
+        </div>
+        <div id="row" class="line_chart2">
+            Increase in the number of people using the internet in the world/selected country over time.
+            <button class="tt tootlip3">Info</button>
+        </div>
+        <div id="row" class="donut_chart">
+            Donut chart showing the percentage with and without internet access in the world/selected country.
+            <button class="tt tootlip4">Info</button>
+        </div>
+        <div id="tall_row" class="line_chart3">
+            Increase in the number of Broadband Subscriptions / 100 People in the world/selected country over time.
+            <button class="tt tootlip5">Info</button>
+        </div>
+        <div id="tall_row" class="line_chart4">
+            Increase in the number of Cellular Subscriptions / 100 People in the world/selected country over time.
+            <button class="tt tootlip6">Info</button>
+        </div>
+        <div id="full_row" class="bar_chart_race">
+        </div>
+        <div id="full_row" class="bar_chart_race2">
+        </div>
+        <div id="full_row" class="bar_chart">
+        </div>
+        <div id="full_row" class="bar_chart2">
+        </div>
+
+    </div>
+
+    <script>
+        // defining variables
+        var active,
+            active_k,
+            hotels,
+            globe,
+            parseDate,
+            circle_scale,
+            percentage_data_grouped,
+            population_data_grouped,
+            mainDiv,
+            color,
+            width,
+            height,
+            radius,
+            pie,
+            arc,
+            svg_pie,
+            labels,
+            updatePieChart,
+            x,
+            y,
+            x_default,
+            height2,
+            width,
+            x2,
+            projection,
+            g;
+
+        const map = d3.select(".map") // selecting the map div
+
+        var line_chart = d3.select(".line_chart") // selecting the line chart div
+
+        var line_chart_svg = line_chart.append("svg"); // Append the svg to the line chart
+
+        var line_chart2 = d3.select(".line_chart2") // selecting the line chart div
+
+        var line_chart2_svg = line_chart2.append("svg"); // Append the svg to the line chart
+
+        var line_chart3 = d3.select(".line_chart3") // selecting the line chart div
+
+        var line_chart3_svg = line_chart3.append("svg"); // Append the svg to the line chart
+
+        var line_chart4 = d3.select(".line_chart4") // selecting the line chart div
+
+        var line_chart4_svg = line_chart4.append("svg"); // Append the svg to the line chart
+
+        var race = d3.select(".bar_chart_race"); // Selecting the div with the bar chart race
+
+        var race_svg = race.append("svg"); // Appending an SVG to the above div
+
+        var bar_chart = d3.select(".bar_chart_race2"); // Selecting the second div with the bar chart race
+
+        var bar_chart_svg = bar_chart.append("svg") // Appending an SVG to this div
+
+    </script>
+
+    <script src="js/drawMap.js">
+        // This file handles the functionality of drawing and updating the map
+    </script>
+
+    <script>
+
+        drawMap(globe = false); // Calling the drawMap function
+
+        var switch_map = 0; // This variable is used to toggle the map layout
+
+        d3.select("#map_toggle").on("input", function (e) { // Toggle the map
+            if (switch_map % 2) drawMap(false);
+            else drawMap(true);
+            switch_map += 1;
+        });
+
+        var toggle_circles = 0;
+
+        d3.select("#toggle").on("input", function (e) { // Toggle the map
+            if (toggle_circles % 2) {
+                d3.selectAll(".country").each((d) => {
+
+                    centroid = projection(d3.geoCentroid(d)); // get the centroid of the country
+
+                    g.append("circle")
+                        .attrs({
+                            class: "dot_1",
+                            cx: centroid[0], // set the x position of the circle to the centroid's x
+                            cy: centroid[1], // set the y position of the circle to the centroid's y
+                            r: 0,
+                            fill: "whitesmoke",
+                            stroke: "black",
+                            "stroke-width": "0.5px",
+                            opacity: 0.5,
+                            id: d.id + "_circle",
+                        })
+                        .styles({
+                            "pointer-events": "none",
+                        })
+                        .transition()
+                        .duration(1000)
+                        .attrs({ // set the radius of the circle to the value of the country's population
+                            r: (dd) => {
+                                return percentage_data_grouped.get(d.id)
+                                    ? circle_scale(
+                                        d3.max(percentage_data_grouped.get(d.id), (d) => +d['Individuals using the Internet (% of population)'])
+                                    )
+                                    : 0;
+                            },
+                        });
+                });
+            }
+            else {
+                d3.selectAll('.dot_1').transition().duration(1000).attrs({
+                    r: 0,
+                }).remove();
+            }
+            toggle_circles += 1;
+        });
+
+    </script>
+
+    <script src="js/defaultLineGraph.js">
+        // This file handles the functionality of drawing the default line graphs
+    </script>
+    <script src="js/updateLineGraph.js">
+        // This file handles the functionality of drawing and updating the line graphs
+    </script>
+    <script src="js/pieChart.js"></script>
+
+    <script>
+
+        initPieChart(); // Calling the pieChart function to initialize the pie chart with world data
+
+        race.append("button")
+            .text("Restart").on("click", function () {
+                restart(race_svg, 'Monthly active users (Statista and TNW (2019))', [2002, 2018]);
+            }) // Adds a button that can be clicked to restart the race for the first bar chart race
+
+        bar_chart.append("button")
+            .text("Restart").on("click", function () {
+                restart(bar_chart_svg,
+                    'Technology Diffusion (Comin and Hobijn (2004) and others)',
+                    [1980, 2019],
+                    heading = 'Share of US households using specific technologies, 1915 to 2019',
+                    csv_path = 'data/technology-adoption-by-households-in-the-united-states.csv',
+                    tickDuration = 800)
+            }) // Adds a button that can be clicked to restart the race for the second bar chart race
+
+    </script>
+
+    <script src="js/barChartRace.js">
+        // Defines the "restart" function required to start the bar chart race
+    </script>
+
+    <script>
+
+        restart(race_svg, 'Monthly active users (Statista and TNW (2019))', [2002, 2018]); // Call the first bar chart race
+
+        restart(bar_chart_svg,
+            'Technology Diffusion (Comin and Hobijn (2004) and others)',
+            [1980, 2019],
+            heading = 'Share of US households using specific technologies, 1915 to 2019',
+            csv_path = 'data/technology-adoption-by-households-in-the-united-states.csv',
+            tickDuration = 800) // Call the second bar chart race
+
+        // The following function handles the drawing and updating of the first bar chart
+        d3.csv("data/daily-hours-spent-with-digital-media-per-adult-user.csv").then(async function (data) {
+            // make a bar chart
+            console.log(data)
+            // bar_chart.append
+
+            const exercise20 = () => {
+                const mainDiv = d3.select('.bar_chart').styles({
+                    display: "flex",
+                    "justify-content": "center",
+                    "align-items": "center",
+                    "flex-direction": "column",
+                });
+                const buttonsDiv = mainDiv.append("div").styles({
+                    width: "50%",
+                    display: "flex",
+                    "justify-content": "space-evenly",
+                });
+
+                var dataLabels = ['Mobile (BOND Internet Trends (2019))',
+                    'Desktop/Laptop (BOND Internet Trends (2019))',
+                    'Other Connected Devices (BOND Internet Trends (2019))']
+
+                var buttonLabels = ['Mobile',
+                    'Desktop/Laptop',
+                    'Other Connected Devices']
+
+                var data1 = data.map((d, i) => {
+                    return {
+                        "group": d['Year'],
+                        "value": d[dataLabels[0]]
+                    }
+                });
+
+                var data2 = data.map((d, i) => {
+                    return {
+                        "group": d['Year'],
+                        "value": d[dataLabels[1]]
+                    }
+                });
+
+                var data3 = data.map((d, i) => {
+                    return {
+                        "group": d['Year'],
+                        "value": d[dataLabels[2]]
+                    }
+                });
+
+                const colorFunctions = [
+                    d3
+                        .scaleLinear()
+                        .interpolate(d3.interpolateHcl)
+                        .domain([
+                            d3.min(data1, function (d) {
+                                return d.value;
+                            }),
+                            d3.max(data1, function (d) {
+                                return d.value;
+                            }),
+                        ])
+                        .range(["blue", "red"]),
+                    d3
+                        .scaleLinear()
+                        .interpolate(d3.interpolateHcl)
+                        .domain([
+                            d3.min(data2, function (d) {
+                                return d.value;
+                            }),
+                            d3.max(data2, function (d) {
+                                return d.value;
+                            }),
+                        ])
+                        .range(["orange", "purple"]),
+                    d3
+                        .scaleLinear()
+                        .interpolate(d3.interpolateHcl)
+                        .domain([
+                            d3.min(data3, function (d) {
+                                return d.value;
+                            }),
+                            d3.max(data3, function (d) {
+                                return d.value;
+                            }),
+                        ])
+                        .range(["violet", "green"]),
+                    // d3
+                    //     .scaleLinear()
+                    //     .interpolate(d3.interpolateHcl)
+                    //     .domain([
+                    //         d3.min(data4, function (d) {
+                    //             return d.value;
+                    //         }),
+                    //         d3.max(data4, function (d) {
+                    //             return d.value;
+                    //         }),
+                    //     ])
+                    //     .range(["brown", "orange"]),
+                    // d3
+                    //     .scaleLinear()
+                    //     .interpolate(d3.interpolateHcl)
+                    //     .domain([
+                    //         d3.min(data5, function (d) {
+                    //             return d.value;
+                    //         }),
+                    //         d3.max(data5, function (d) {
+                    //             return d.value;
+                    //         }),
+                    //     ])
+                    //     .range(["steelblue", "violet"]),
+                ];
+
+                [data1, data2, data3].map((data, i) => {
+                    buttonsDiv
+                        .append("button")
+                        .on("click", () => {
+                            update(data, i);
+                        })
+                        .text(buttonLabels[i]);
+                });
+
+                // set the dimensions and margins of the graph
+                const margin = { top: 30, right: 30, bottom: 120, left: 60 };
+                const width =
+                    document.getElementsByClassName("bar_chart")[0].clientWidth - margin.left - margin.right;
+                const height =
+                    document.getElementsByClassName("bar_chart")[0].clientHeight - margin.top - margin.bottom;
+
+                // append the svg object to the body of the page
+                var svg = mainDiv
+                    .append("svg")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom)
+                    .append("g")
+                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+                // X axis
+                var x = d3
+                    .scaleBand()
+                    .range([0, width])
+                    .domain(
+                        data1.map(function (d) {
+                            return d.group;
+                        })
+                    )
+                    .padding(0.2);
+
+                // Add Y axis
+                var y = d3.scaleLinear().domain([0, 25]).range([height, 0]);
+
+                svg
+                    .append("g")
+                    .attr("transform", "translate(0," + height + ")")
+                    .attr("class", "bottomAxis")
+                    .call(d3.axisBottom(x));
+
+                svg.append("g").attr("class", "leftAxis").call(d3.axisLeft(y));
+
+                // A function that create / update the plot for a given variable:
+                function update(data, i) {
+                    // X axis
+                    x = d3
+                        .scaleBand()
+                        .range([0, width])
+                        .domain(
+                            data.map(function (d) {
+                                return d.group;
+                            })
+                        )
+                        .padding(0.2);
+
+                    // Add Y axis
+                    y = d3
+                        .scaleLinear()
+                        .domain([
+                            0,
+                            d3.max(data, function (d) {
+                                return d.value;
+                            }) + 5,
+                        ])
+                        .range([height, 0]);
+
+                    svg
+                        .selectAll(".bottomAxis")
+                        .transition()
+                        .duration(1000)
+                        .call(d3.axisBottom(x));
+
+                    svg.selectAll(".leftAxis").transition().duration(1000).call(d3.axisLeft(y));
+
+                    var u = svg.selectAll("rect").data(data);
+                    u.enter()
+                        .append("rect")
+                        .on("mouseover", onMouseOver)
+                        .on("mouseout", onMouseOut)
+                        .merge(u)
+                        .transition()
+                        .duration(1000)
+                        .attr("x", function (d) {
+                            return x(d.group);
+                        })
+                        .attr("y", function (d) {
+                            return y(d.value);
+                        })
+                        .attr("width", x.bandwidth())
+                        .attr("height", function (d) {
+                            return height - y(d.value);
+                        })
+                        .attr("fill", (d) => colorFunctions[i](d.value))
+                        .attr("rx", "20px");
+
+                    u.exit()
+                        .transition()
+                        .duration(1000)
+                        .attr("y", height)
+                        .attr("height", 0)
+                        .style("opacity", 0)
+                        .remove();
+                }
+
+                //mouseover event handler function
+                function onMouseOver(event, d) {
+                    d3.selectAll("rect").style("opacity", 0.5);
+
+                    d3.select(this)
+                        .style("opacity", 1)
+                        .transition() // adds animation
+                        .duration(400)
+                        .attrs({
+                            width: x.bandwidth() + 5,
+                            y: (d) => y(d.value) - 10,
+                            height: (d) => height - y(d.value) + 10,
+                            x: (d) => x(d.group) - 2.5,
+                            stroke: "black",
+                            "stroke-width": "3px",
+                            rx: "25px",
+                            cursor: "pointer",
+                        });
+
+                    svg
+                        .append("text")
+                        .attrs({
+                            class: "val",
+                            x: x(d.group) + x.bandwidth() / 2,
+                            y: 0,
+                        })
+                        .styles({
+                            "font-size": "1em",
+                            "font-weight": "bold",
+                            "font-family": "monospace",
+                            "text-transform": "uppercase",
+                            "text-anchor": "middle",
+                        })
+                        .transition()
+                        .duration(800)
+                        .ease(d3.easeBounce)
+                        .attrs({
+                            y: y(d.value) - 25,
+                        })
+                        .text(d.group + " ⟶ " + d.value); // Value of the text
+                }
+
+                //mouseout event handler function
+                function onMouseOut(event, d) {
+                    d3.select(this)
+                        .transition() // adds animation
+                        .duration(400)
+                        .attrs({
+                            stroke: "none",
+                            "stroke-width": "0px",
+                            width: x.bandwidth(),
+                            y: y(d.value),
+                            height: height - y(d.value),
+                            x: x(d.group),
+                            rx: "20px",
+                        });
+
+                    d3.selectAll("rect").style("opacity", 1);
+
+                    d3.selectAll(".val").remove();
+                }
+
+                // Initialize the plot with the first dataset
+                update(data1, 0);
+            };
+
+            exercise20();
+        })
+
+        // The following function handles the drawing and updating of the second bar chart
+        d3.csv("data/percentage-of-young-people-engaging-in-social-networking-online.csv").then(async function (data) {
+            // make a bar chart
+            console.log(data)
+            // bar_chart.append
+
+            const exercise20 = () => {
+                const mainDiv = d3.select('.bar_chart2').styles({
+                    display: "flex",
+                    "justify-content": "center",
+                    "align-items": "center",
+                    "flex-direction": "column",
+                });
+                const buttonsDiv = mainDiv.append("div").styles({
+                    width: "50%",
+                    display: "flex",
+                    "justify-content": "space-evenly",
+                });
+
+                var dataLabels = ['Proportion of people age 16-24 engaging in social networking online (%)']
+
+                var buttonLabels = ['Proportion of people age 16-24 engaging in social networking online (%)']
+
+                var data1 = data.map((d, i) => {
+                    return {
+                        "group": d['Code'] ? d['Code'] : d['Entity'],
+                        "value": d[dataLabels[0]]
+                    }
+                });
+
+
+                const colorFunctions = [
+                    d3.scaleOrdinal().range(d3.schemeSet1)
+                ];
+
+                [data1].map((data, i) => {
+                    buttonsDiv
+                        .append("button")
+                        .on("click", () => {
+                            update(data, i);
+                        })
+                        .text(buttonLabels[i]);
+                });
+
+                // set the dimensions and margins of the graph
+                const margin = { top: 30, right: 30, bottom: 120, left: 60 };
+                const width =
+                    document.getElementsByClassName("bar_chart")[0].clientWidth - margin.left - margin.right;
+                const height =
+                    document.getElementsByClassName("bar_chart")[0].clientHeight - margin.top - margin.bottom;
+
+                // append the svg object to the body of the page
+                var svg = mainDiv
+                    .append("svg")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom)
+                    .append("g")
+                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+                // X axis
+                var x = d3
+                    .scaleBand()
+                    .range([0, width])
+                    .domain(
+                        data1.map(function (d) {
+                            return d.group;
+                        })
+                    )
+                    .padding(0.2);
+
+                // Add Y axis
+                var y = d3.scaleLinear().domain([0, 25]).range([height, 0]);
+
+                svg
+                    .append("g")
+                    .attr("transform", "translate(0," + height + ")")
+                    .attr("class", "bottomAxis")
+                    .call(d3.axisBottom(x));
+
+                svg.append("g").attr("class", "leftAxis").call(d3.axisLeft(y));
+
+                // A function that create / update the plot for a given variable:
+                function update(data, i) {
+                    // X axis
+                    x = d3
+                        .scaleBand()
+                        .range([0, width])
+                        .domain(
+                            data.map(function (d) {
+                                return d.group;
+                            })
+                        )
+                        .padding(0.2);
+
+                    // Add Y axis
+                    y = d3
+                        .scaleLinear()
+                        .domain([
+                            0,
+                            d3.max(data, function (d) {
+                                return d.value;
+                            }) + 5,
+                        ])
+                        .range([height, 0]);
+
+                    svg
+                        .selectAll(".bottomAxis")
+                        .transition()
+                        .duration(1000)
+                        .call(d3.axisBottom(x));
+
+                    svg.selectAll(".leftAxis").transition().duration(1000).call(d3.axisLeft(y));
+
+                    var u = svg.selectAll("rect").data(data);
+                    u.enter()
+                        .append("rect")
+                        .on("mouseover", onMouseOver)
+                        .on("mouseout", onMouseOut)
+                        .merge(u)
+                        .transition()
+                        .duration(1000)
+                        .attr("x", function (d) {
+                            return x(d.group);
+                        })
+                        .attr("y", function (d) {
+                            return y(d.value);
+                        })
+                        .attr("width", x.bandwidth())
+                        .attr("height", function (d) {
+                            return height - y(d.value);
+                        })
+                        .attr("fill", (d) => colorFunctions[i](d.value))
+                        .attr("rx", "20px");
+
+                    u.exit()
+                        .transition()
+                        .duration(1000)
+                        .attr("y", height)
+                        .attr("height", 0)
+                        .style("opacity", 0)
+                        .remove();
+                }
+
+                //mouseover event handler function
+                function onMouseOver(event, d) {
+                    d3.selectAll("rect").style("opacity", 0.5);
+
+                    d3.select(this)
+                        .style("opacity", 1)
+                        .transition() // adds animation
+                        .duration(400)
+                        .attrs({
+                            width: x.bandwidth() + 5,
+                            y: (d) => y(d.value) - 10,
+                            height: (d) => height - y(d.value) + 10,
+                            x: (d) => x(d.group) - 2.5,
+                            stroke: "black",
+                            "stroke-width": "3px",
+                            rx: "25px",
+                            cursor: "pointer",
+                        });
+
+                    svg
+                        .append("text")
+                        .attrs({
+                            class: "val",
+                            x: x(d.group) + x.bandwidth() / 2,
+                            y: 0,
+                        })
+                        .styles({
+                            "font-size": "1em",
+                            "font-weight": "bold",
+                            "font-family": "monospace",
+                            "text-transform": "uppercase",
+                            "text-anchor": "middle",
+                        })
+                        .transition()
+                        .duration(800)
+                        .ease(d3.easeBounce)
+                        .attrs({
+                            y: y(d.value) - 25,
+                        })
+                        .text(d.group + " ⟶ " + d.value); // Value of the text
+                }
+
+                //mouseout event handler function
+                function onMouseOut(event, d) {
+                    d3.select(this)
+                        .transition() // adds animation
+                        .duration(400)
+                        .attrs({
+                            stroke: "none",
+                            "stroke-width": "0px",
+                            width: x.bandwidth(),
+                            y: y(d.value),
+                            height: height - y(d.value),
+                            x: x(d.group),
+                            rx: "20px",
+                        });
+
+                    d3.selectAll("rect").style("opacity", 1);
+
+                    d3.selectAll(".val").remove();
+                }
+
+                // Initialize the plot with the first dataset
+                update(data1, 0);
+            };
+
+            exercise20();
+
+            const range_color = d3
+                .select("body")
+                .append("div")
+                .attr("class", "range_color")
+                .styles({
+                    width: "2%",
+                    height: "30%",
+                    position: "absolute",
+                    top: "10%",
+                    left: "45%",
+                    background: "linear-gradient(to top, white, #BC9E82)",
+                    "border-radius": "25px",
+                    "z-index": "1",
+                    border: "1px solid black",
+                    display: "flex",
+                    "flex-direction": "column",
+                    "justify-content": "space-between",
+                    "align-items": "center",
+                    padding: "5px",
+                    "font-size": "0.8em",
+                    margin: "5px",
+                });
+
+            range_color.append("div").attr("class", "range_color_text").html("<p>100%</p>");
+            range_color.append("div").attr("class", "range_color_text").html("<p>0%</p>");
+        })
+
+        // The following function handles the drawing of the multiline chart
+        d3.csv('data/users-by-social-media-platform.csv').then((data) => {
+
+            var parseDate = d3.timeParse("%Y");
+            var iso_code_group = d3.group(data, d => d.Entity)
+            // console.log(iso_code_group)
+
+            var continent_list = ["Facebook", "YouTube", "Whatsapp", "WeChat", "Instagram", "TikTok", "Weibo", "Reddit", "Twitter", "Snapchat", "Pinterest"]
+
+            var continent_data_list = continent_list.map((continent) => {
+                return iso_code_group.get(continent).map((d) => {
+                    console.log(d)
+                    return {
+                        date: parseDate(d.Year),
+                        value: +d['Monthly active users (Statista and TNW (2019))'],
+                        iso_code: d.Entity,
+                        continent: d.Entity
+                    }
+                })
+            })
+
+            // color palette
+            const color = d3.scaleOrdinal().range(d3.schemeSet3);
+
+            // append the svg object to the body of the page
+            var svg_container = d3.select("body")
+                .append('div')
+                .attr("class", "line_chart_container")
+                .styles({
+                    "width": "100%",
+                    "height": "50vh",
+                    "display": "flex",
+                    "flex-direction": "column",
+                    "justify-content": "center",
+                    "align-items": "center",
+                    "background-color": "#141414",
+                    "margin-top": "20px",
+                })
+
+            svg_container.append("svg")
+
+            var margin = { top: 30, right: 50, bottom: 30, left: 100 },
+                width = +document.getElementsByClassName("line_chart_container")[0].clientWidth - margin.left - margin.right,
+                height = +document.getElementsByClassName("line_chart_container")[0].clientHeight - margin.top - margin.bottom;
+
+            // // console.log(document.getElementByClass("line_chart_container"), height)
+            var svg = svg_container
+                .select("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform",
+                    "translate(" + margin.left + "," + margin.top + ")");
+
+            // add axis labels
+            svg.append("text")
+                // .attr("class", "x label")
+                .attr("text-anchor", "end")
+                .attr("x", width)
+                .attr("y", height - 6)
+                .attr("fill", "white")
+                .text("Date");
+
+            svg.append("text")
+                // .attr("class", "y label")
+                .attr("text-anchor", "end")
+                .attr("y", 6)
+                .attr("dy", ".75em")
+                .attr("transform", "rotate(-90)")
+                .attr("fill", "white")
+                .text("Users");
+
+            var continent_data_list_flat = continent_data_list.flat()
+
+            var continent_data_list_group = d3.group(continent_data_list_flat, d => d.iso_code)
+            // Add X axis --> it is a date format
+            var x = d3.scaleTime()
+                .domain(d3.extent(continent_data_list_flat, function (d) { return d.date; }))
+                .range([0, width]);
+            svg.append("g")
+                .attr("transform", "translate(0," + height + ")")
+                .attr("color", "white")
+                .attr("class", "x_axis_line")
+                .call(d3.axisBottom(x));
+
+            // Add Y axis
+            var y = d3.scaleLinear()
+                .domain([0, d3.max(continent_data_list_flat, function (d) { return d.value; })])
+                .range([height, 0]);
+            svg.append("g")
+                .attr("color", "white")
+                .attr("class", "y_axis_line")
+                .call(d3.axisLeft(y));
+
+            // Add the line
+            svg.selectAll(".lines")
+                .data(continent_data_list_group)
+                .enter()
+                .append("path")
+                .attr("class", "lines")
+                .attr("fill", "none")
+                .attr("stroke", (d, i) => color(i))
+                .attr("stroke-width", 4)
+                .attr("d", function (d) {
+                    // console.log(d)
+                    return d3.line()
+                        .x(function (d) { return x(d.date); })
+                        .y(function (d) { return y(d.value); })
+                        (d[1])
+                }).on("mouseover", function (d) {
+
+                    d3.selectAll(".lines")
+                        .transition()
+                        .duration(500)
+                        .attr("opacity", 0.3)
+
+                    d3.select(this)
+                        .styles({
+                            "cursor": "pointer",
+                        })
+                        .transition()
+                        .duration(500)
+                        .attr("opacity", 1)
+                }).on("mouseout", function (d) {
+                    d3.selectAll(".lines")
+                        .transition()
+                        .duration(500)
+                        .attr("opacity", 1)
+                })
+
+            // Add one dot in the legend for each name.
+            var size = 15
+            svg.selectAll("mydots")
+                .data(continent_data_list_group)
+                .enter()
+                .append("rect")
+                .attr('class', 'mydots')
+                .attr("x", 100)
+                .attr("y", function (d, i) { return 100 + i * (size + 5) }) // 100 is where the first dot appears. 25 is the distance between dots
+                .attr("width", size)
+                .attr("height", size)
+                .style("fill", function (d, i) { return color(i) })
+
+            // Add one dot in the legend for each name.
+            svg.selectAll("mylabels")
+                .data(continent_data_list_group)
+                .enter()
+                .append("text")
+                .attr('class', 'mylabels')
+                .attr("x", 100 + size * 1.2)
+                .attr("y", function (d, i) { return 100 + i * (size + 5) + (size / 2) }) // 100 is where the first dot appears. 25 is the distance between dots
+                .style("fill", function (d, i) { return color(i) })
+                .text(function (d) { return d[1][0].continent })
+                .attr("text-anchor", "left")
+                .style("alignment-baseline", "middle")
+        })
+    </script>
+
+    <center>
+        <div>
+            <button>
+                <a href="clustering.html">Go to Clustering Analysis</a>
+            </button>
+        </div>
+    </center>
+
+</body>
+
+</html>

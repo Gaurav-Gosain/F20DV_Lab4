@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Covid -Dashboard</title>
+    <title>Clustering Analysis</title>
     <script src='https://d3js.org/d3.v7.min.js'></script>
     <script src="https://d3js.org/d3-selection-multi.v1.min.js"></script>
     <script src="https://d3js.org/d3-geo-projection.v3.min.js"></script>
@@ -222,7 +222,6 @@
 
                             }
                         })
-
                 }
 
                 svg_k
@@ -251,14 +250,14 @@
                         "text-anchor": "end",
                         x: height,
                         y: -margin.bottom,
-                        "font-size": "1.5em",
+                        "font-size": ".5em",
                         "font-weight": "bold",
                         fill: "white",
                         "pointer-events": "none",
                     })
                     .styles({
                         "font-family": "monospace",
-                        "letter-spacing": "0.5em",
+                        "letter-spacing": "0.1em",
                         "text-transform": "uppercase",
                         transform: "rotate(90deg)",
                     })
@@ -584,9 +583,9 @@
                             })
 
                         d3.select("#point_" + d.id)
-                            .transition()
-                            .delay(100)
-                            .duration(200)
+                            // .transition()
+                            // .delay(100)
+                            // .duration(200)
                             .attrs({
                                 r: 20,
                                 'stroke-width': 0.5,
